@@ -1,11 +1,11 @@
 import requests, re
 import pandas as pd
 from bs4 import BeautifulSoup
-from datetime import datetime
-from FileControl import FileController
+import FileControl
 
+colours = None
 site_count = 0
-file = FileController()
+file = FileControl.FileController()
 
 def get_soup(url):
     global site_count
@@ -26,13 +26,7 @@ def get_book_lists(soup, site=""):
 
   return urls
 
-
-
-def get_book_list_data(book_site, book_list_site):
-  """
-    Gets the data from the book list site and adds the data to the file.
-  """
-  
+def get_book_list_data(book_site, book_list_site, frame=pd.DataFrame):
   global site_count
   book_list_soup = get_soup(book_list_site)
 
@@ -48,8 +42,12 @@ def get_book_list_data(book_site, book_list_site):
         link = get_link(book, book_site)
         
         file.add(title, desc, thumb, link)
+        site_update = "Site {}: Registered".format(site_count)
         
-        print("Site {}: Registered".format(site_count))
+        try:
+          colours.print_message(site_update)
+        except AttributeError:
+          print("{} (GoodReads file has not been setup)".format(site_update))
 
 
 def get_books(soup):
@@ -92,7 +90,6 @@ def GoodReads(filename="Test.sql"):
     soup = get_soup(site)
     regx = re.compile("/genres/+")
     book_sites_links = soup.find_all("a", {'class': 'gr-hyperlink'}, href=regx)
-    sql_query = "INSERT INTO products (title, description, image, link) VALUES\n"
     site_count = 0
 
   
@@ -100,6 +97,14 @@ def GoodReads(filename="Test.sql"):
       book_list_site = site[:-1] + s['href']
       get_book_list_data(site, book_list_site)
 
+def setup(**kwargs):
+  global colours
   
+  terminal_colors = kwargs["terminal_colors"]
+  colours = terminal_colors
+  
+  if colours is not None:
+    FileControl.setup(terminal_colors=colours)
+
 if __name__ == "__main__":
     GoodReads()
