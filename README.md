@@ -30,6 +30,6 @@ To run the program run the following command in the terminal:
 ## Further Development
 
 - Add additional sites to scrape from.
-- Add a better storage solution (Change from CSV to SQL).
+- Add additional formats to export to.
 
 
