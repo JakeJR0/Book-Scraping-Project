@@ -1,5 +1,5 @@
 # Book Scraping Project
-
+[![Pylint](https://github.com/JakeJR0/Book-Scraping-Project/actions/workflows/pylint.yml/badge.svg)](https://github.com/JakeJR0/Book-Scraping-Project/actions/workflows/pylint.yml)
 
 ## Introduction
 
