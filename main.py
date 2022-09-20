@@ -8,6 +8,9 @@ from time import sleep
 
 
 def main_menu():
+  """
+    This allows the user to navigate the program.
+  """
   main_menu_object = MenuBuilder("Welcome to the Book Scraper")
   main_menu_object.add("Scrape the Web")
   main_menu_object.add("View")

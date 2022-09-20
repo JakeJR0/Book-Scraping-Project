@@ -50,7 +50,11 @@ class FileController:
     return valid_title
 
   def export(self, file_name=""):
-    # CSV Seleted
+    """
+      This function attempts to export the books
+      table into the format that has been provided.
+    """
+    
     cur = self.cursor
 
     if os.path.exists(file_name):
@@ -144,6 +148,13 @@ class FileController:
       
   
   def view_latest_book_titles_frame(self, limit=None):
+    """
+      This grabs the latest book titles that have entered
+      the books table.
+
+      Additionally it allows a limit to be imposed on the amount
+      of data to be retrieved.
+    """
     cur = self.cursor
     data = None
     if limit is None:
@@ -286,6 +297,11 @@ class FileController:
     cur.close()
 
 def setup(**kwargs):
+  """
+    This sets up the file so it has access
+    to the terminal colours.
+  """
+  
   global colours
   
   terminal_colors = kwargs["terminal_colors"]

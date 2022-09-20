@@ -27,6 +27,10 @@ def get_book_lists(soup, site=""):
   return urls
 
 def get_book_list_data(book_site, book_list_site, frame=pd.DataFrame):
+  """
+    This gets a list of books from the site provided.
+  """
+  
   global site_count
   book_list_soup = get_soup(book_list_site)
 
@@ -43,7 +47,9 @@ def get_book_list_data(book_site, book_list_site, frame=pd.DataFrame):
         
         file.add(title, desc, thumb, link)
         site_update = "Site {}: Registered".format(site_count)
-        
+
+        # Ensures that the program does not error
+        # if the file did not get setup.
         try:
           colours.print_message(site_update)
         except AttributeError:
@@ -84,11 +90,28 @@ def get_link(book, site):
     return site[:-1] + book.find('a', {'class': 'bookTitle'})['href']
 
 
-def GoodReads(filename="Test.sql"):
+def GoodReads():
+    """
+      This is the main function, by running this
+      it starts web-scrapping from the site variable as
+      a base url.
+
+      This function works through all the available links
+      that link to books.
+    """
+  
     global site_count
+    
     site = "https://www.goodreads.com/"
+  
     soup = get_soup(site)
+  
+    # Ensures the web scrapper stays in the
+    # genres path of the site.
+    
     regx = re.compile("/genres/+")
+
+  
     book_sites_links = soup.find_all("a", {'class': 'gr-hyperlink'}, href=regx)
     site_count = 0
 
@@ -98,6 +121,11 @@ def GoodReads(filename="Test.sql"):
       get_book_list_data(site, book_list_site)
 
 def setup(**kwargs):
+  """
+    This sets up the file so it has access
+    to the terminal colours.
+  """
+  
   global colours
   
   terminal_colors = kwargs["terminal_colors"]
