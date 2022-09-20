@@ -1,18 +1,35 @@
 from colorama import Fore, Style
 
 class Terminal:
+  """
+    This is used to orgainise the functions
+    so it is easier to import into other files.
+  """
+  
   @classmethod
   def print_error(self, text=""):
+    """
+      This is the standard colouring for an 
+      error message in this program.
+    """
     output = Fore.RED + text + Style.RESET_ALL
     print(output)
   
   @classmethod
   def print_warning(self, text=""):
+    """
+      This is the standard colouring for a
+      warning message in this program.
+    """
     output = Fore.YELLOW + text + Style.RESET_ALL
     print(output)
     
   @classmethod
   def print_message(self, text=""):
+    """
+      This is the standard colouring for a
+      message in this program.
+    """
     output = Fore.GREEN + text + Style.RESET_ALL
     print(output)
 
@@ -31,12 +48,27 @@ class MenuBuilder:
     self._items.append(option)
 
   def get_input(self):
+    """
+      This gets an input from the user which is
+      returned.
+    """
+    
     user_question = Fore.BLUE + "\n\n[User Choice]: " + Style.RESET_ALL
     user_input = input(user_question)
     
     return user_input
 
   def get_number_input(self, min=None, max=None):
+    """
+      This gets a number input with a minimum and maximum,
+      this helps to ensure the data is within the range that
+      is needed.
+
+      Note:
+        if the min or max is None it will remove that aspect
+        of the validation from the number, which can be useful
+        if you need a number with a minimum and no maximum.
+    """
     while True:
       user_input = self.get_input()
       
@@ -58,10 +90,12 @@ class MenuBuilder:
       break
     return user_input
       
-        
-        
-  
   def get_menu_option_input(self):
+    """
+      This is used to ensure that the input
+      provided from the user is valid with the
+      current menu that was built.
+    """
     while True:
       user_input = self.get_input()
       
