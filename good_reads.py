@@ -10,42 +10,10 @@
 import re
 import requests
 from bs4 import BeautifulSoup
-from colorama import Fore, Style
 
 import file_control
 
-class Terminal:
-    """
-    This is used to orgainise the functions
-    so it is easier to import into other files.
-    """
-
-    @classmethod
-    def print_error(cls, text=""):
-        """
-        This is the standard colouring for an
-        error message in this program.
-        """
-        output = Fore.RED + text + Style.RESET_ALL
-        print(output)
-
-    @classmethod
-    def print_warning(cls, text=""):
-        """
-        This is the standard colouring for a
-        warning message in this program.
-        """
-        output = Fore.YELLOW + text + Style.RESET_ALL
-        print(output)
-
-    @classmethod
-    def print_message(cls, text=""):
-        """
-        This is the standard colouring for a
-        message in this program.
-        """
-        output = Fore.GREEN + text + Style.RESET_ALL
-        print(output)
+Terminal = file_control.visual_elements.Terminal
 
 file = file_control.FileController()
 

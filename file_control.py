@@ -10,42 +10,9 @@ import re as regex
 import sqlite3
 import os
 import pandas as pd
-from colorama import Fore, Style
+import visual_elements
 
-class Terminal:
-    """
-    This is used to orgainise the functions
-    so it is easier to import into other files.
-    """
-
-    @classmethod
-    def print_error(cls, text=""):
-        """
-        This is the standard colouring for an
-        error message in this program.
-        """
-
-        output = f"{Fore.RED}{text}{Style.RESET_ALL}"
-        print(output)
-
-    @classmethod
-    def print_warning(cls, text=""):
-        """
-        This is the standard colouring for a
-        warning message in this program.
-        """
-        output = f"{Fore.YELLOW}{text}{Style.RESET_ALL}"
-        print(output)
-
-    @classmethod
-    def print_message(cls, text=""):
-        """
-        This is the standard colouring for a
-        message in this program.
-        """
-        output = f"{Fore.GREEN}{text}{Style.RESET_ALL}"
-        print(output)
-
+Terminal = visual_elements.Terminal
 class ExportError(SystemError):
     """
     Used to inform the user that the export failed.
