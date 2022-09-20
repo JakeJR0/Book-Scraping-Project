@@ -1,9 +1,50 @@
+"""
+  Project Name: Book Scraping Project
+  File Name: file_control.py
+
+  Description:
+    This file is in-change of storage of the program.
+"""
+
 import re as regex
+import sqlite3
+import os
 import pandas as pd
-import sqlite3, os
+from colorama import Fore, Style
 
-colours = None
+class Terminal:
+    """
+    This is used to orgainise the functions
+    so it is easier to import into other files.
+    """
 
+    @classmethod
+    def print_error(cls, text=""):
+        """
+        This is the standard colouring for an
+        error message in this program.
+        """
+
+        output = f"{Fore.RED}{text}{Style.RESET_ALL}"
+        print(output)
+
+    @classmethod
+    def print_warning(cls, text=""):
+        """
+        This is the standard colouring for a
+        warning message in this program.
+        """
+        output = f"{Fore.YELLOW}{text}{Style.RESET_ALL}"
+        print(output)
+
+    @classmethod
+    def print_message(cls, text=""):
+        """
+        This is the standard colouring for a
+        message in this program.
+        """
+        output = f"{Fore.GREEN}{text}{Style.RESET_ALL}"
+        print(output)
 
 class ExportError(SystemError):
     """
@@ -12,6 +53,11 @@ class ExportError(SystemError):
 
 
 class FileController:
+    """
+        This class controls the database and
+        the data of the program.
+    """
+
     @property
     def cursor(self):
         """
@@ -63,10 +109,9 @@ class FileController:
 
         if os.path.exists(file_name):
             raise ExportError("File already exists, please try a different name.")
-            return
 
-        if regex.match("(\S+)\.csv", file_name):
-            colours.print_message("\nExporting to CSV (This might take a while)\n")
+        if regex.match(r"(\S+)\.csv", file_name):
+            Terminal.print_message("\nExporting to CSV (This might take a while)\n")
             export = cur.execute(
                 """
         SELECT
@@ -95,8 +140,8 @@ class FileController:
 
             frame.to_csv(file_name, index=False)
 
-        elif regex.match("(\S+)\.json", file_name):
-            colours.print_message("\nExporting to JSON (This might take a while)\n")
+        elif regex.match(r"(\S+)\.json", file_name):
+            Terminal.print_message("\nExporting to JSON (This might take a while)\n")
             export = cur.execute(
                 """
         SELECT
@@ -125,10 +170,10 @@ class FileController:
 
             frame.to_json(file_name)
 
-        elif regex.match("(\S+)\.sql", file_name):
-            colours.print_message("\nExporting to SQL (This might take a while)\n")
-            sql_insert = "INSERT INTO books(ID, book_title, book_description, book_cover, book_link)"
-            sql_insert += "\nVALUES"
+        elif regex.match(r"(\S+)\.sql", file_name):
+            Terminal.print_message("\nExporting to SQL (This might take a while)\n")
+            sql_insert = "INSERT INTO books(ID, book_title,"
+            sql_insert += " book_description, book_cover, book_link)\nVALUES"
 
             export = cur.execute(
                 """
@@ -148,8 +193,8 @@ class FileController:
                 line = line.format(i[0], i[1], i[2], i[3], i[4])
                 sql_insert += line
 
-            with open(file_name, "x") as f:
-                f.write(sql_insert)
+            with open(file_name, "x", encoding="utf-8") as file:
+                file.write(sql_insert)
 
         else:
             error_message = "The extension provided is not supported.\n"
@@ -157,16 +202,16 @@ class FileController:
             cur.close()
             raise ExportError(error_message)
 
-        colours.print_message("Exported successfully to {}".format(file_name))
+        Terminal.print_message(f"Exported successfully to {file_name}")
         cur.close()
 
     def view_latest_book_titles_frame(self, limit=None):
         """
-        This grabs the latest book titles that have entered
-        the books table.
+            This grabs the latest book titles that have entered
+            the books table.
 
-        Additionally it allows a limit to be imposed on the amount
-        of data to be retrieved.
+            Additionally it allows a limit to be imposed on the amount
+            of data to be retrieved.
         """
         cur = self.cursor
         data = None
@@ -183,13 +228,11 @@ class FileController:
       """
             )
         else:
-            if type(limit) != int:
+            if not isinstance(limit, int):
                 raise ValueError("Limit provided is not an integer.")
-                return
 
             if limit <= 0:
                 raise ValueError("Limit provided must be higher than 0.")
-                return
 
             data = cur.execute(
                 """
@@ -234,12 +277,10 @@ class FileController:
         # Ensures the title does not exist
 
         if not self._valid_book_title(title):
-            book_exists_warning = "{} already exists in the database. (Skipped)".format(
-                title
-            )
+            book_exists_warning = f"{title} already exists in the database. (Skipped)"
 
             try:
-                colours.print_warning(book_exists_warning)
+                Terminal.print_warning(book_exists_warning)
             except AttributeError:
                 print(book_exists_warning + " (FileControl was not setup)")
             return
@@ -282,9 +323,7 @@ class FileController:
         book_count = cur.fetchone()[0]
         cur.close()
 
-        output = "Currently we have {} books registered within the database.".format(
-            book_count
-        )
+        output = f"Currently we have {book_count} books registered within the database."
 
         return output
 
@@ -293,7 +332,7 @@ class FileController:
         Sets up the file controller class to ensure it can
         function as intended.
         """
-        file_name_valid = regex.match("(\S+)\.db", file_name)
+        file_name_valid = regex.match(r"(\S+)\.db", file_name)
 
         if not file_name_valid:
             raise ValueError("File name not meeting the requirements.")
@@ -317,19 +356,6 @@ class FileController:
         )
 
         cur.close()
-
-
-def setup(**kwargs):
-    """
-    This sets up the file so it has access
-    to the terminal colours.
-    """
-
-    global colours
-
-    terminal_colors = kwargs["terminal_colors"]
-    colours = terminal_colors
-
 
 if __name__ == "__main__":
     FileController()

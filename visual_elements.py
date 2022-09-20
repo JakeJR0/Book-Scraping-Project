@@ -1,3 +1,12 @@
+"""
+  Project Name: Book Scraping Project
+  File Name: visual_elements.py
+
+  Description:
+    This is the file that contains all of the visual elements such
+    as terminal colours and menus.
+"""
+
 from colorama import Fore, Style
 
 
@@ -8,7 +17,7 @@ class Terminal:
     """
 
     @classmethod
-    def print_error(self, text=""):
+    def print_error(cls, text=""):
         """
         This is the standard colouring for an
         error message in this program.
@@ -17,7 +26,7 @@ class Terminal:
         print(output)
 
     @classmethod
-    def print_warning(self, text=""):
+    def print_warning(cls, text=""):
         """
         This is the standard colouring for a
         warning message in this program.
@@ -26,7 +35,7 @@ class Terminal:
         print(output)
 
     @classmethod
-    def print_message(self, text=""):
+    def print_message(cls, text=""):
         """
         This is the standard colouring for a
         message in this program.
@@ -59,7 +68,7 @@ class MenuBuilder:
 
         return user_input
 
-    def get_number_input(self, min=None, max=None):
+    def get_number_input(self, min_num=None, max_num=None):
         """
         This gets a number input with a minimum and maximum,
         this helps to ensure the data is within the range that
@@ -75,25 +84,25 @@ class MenuBuilder:
 
             try:
                 user_input = int(user_input)
-            except BaseException:
+            except ValueError:
                 Terminal.print_error(
                     "\nPlease type in a valid numeric option from the menu."
                 )
-                return
+                return None
 
-            if min is not None and type(min) == int:
-                if user_input < min:
+            if min_num is not None and isinstance(min_num, int):
+                if user_input < min_num:
                     Terminal.print_error(
                         "\nPlease type a valid number. (The number is too small.)"
                     )
-                    return
+                    return None
 
-            if max is not None and type(max) == int:
-                if user_input > max:
+            if max_num is not None and isinstance(max_num, int):
+                if user_input > max_num:
                     Terminal.print_error(
                         "\nPlease type a valid number. (The number is too large.)"
                     )
-                    return
+                    return None
             break
         return user_input
 
@@ -108,11 +117,11 @@ class MenuBuilder:
 
             try:
                 user_input = int(user_input)
-            except BaseException:
+            except ValueError:
                 Terminal.print_error(
                     "\nPlease type in a valid numeric option from the menu."
                 )
-                return
+                return None
 
             if len(self._items) < user_input > len(self._items):
                 Terminal.print_error("\nPlease select an option within the menu range.")
@@ -127,22 +136,15 @@ class MenuBuilder:
         which allows the user to print it out.
         """
         menu = Fore.RED
-        menu += "\n\n{}\n".format(self._title)
+        menu += f"\n\n{self._title}\n"
         menu += Style.RESET_ALL
         menu += Fore.GREEN
         ind = 0
         for i in self._items:
             ind += 1
-            menu += "\n[{}]: {}".format(ind, i)
+            menu += f"\n[{ind}]: {i}"
         menu += Style.RESET_ALL
         return menu
-
-    def __del__(self):
-        """
-        Allows the class to be deleted.
-        """
-
-        pass
 
     def __init__(self, title=""):
         """

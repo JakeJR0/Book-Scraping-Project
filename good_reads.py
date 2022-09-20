@@ -1,20 +1,67 @@
-import requests, re
-import pandas as pd
-from bs4 import BeautifulSoup
-import FileControl
+"""
+  Project Name: Book Scraping Project
+  File Name: good_reads.py
 
-colours = None
-site_count = 0
-file = FileControl.FileController()
+  Description:
+    This file is in-change of web-scraping the
+    goodreads website.
+"""
+
+import re
+import requests
+from bs4 import BeautifulSoup
+from colorama import Fore, Style
+
+import file_control
+
+class Terminal:
+    """
+    This is used to orgainise the functions
+    so it is easier to import into other files.
+    """
+
+    @classmethod
+    def print_error(cls, text=""):
+        """
+        This is the standard colouring for an
+        error message in this program.
+        """
+        output = Fore.RED + text + Style.RESET_ALL
+        print(output)
+
+    @classmethod
+    def print_warning(cls, text=""):
+        """
+        This is the standard colouring for a
+        warning message in this program.
+        """
+        output = Fore.YELLOW + text + Style.RESET_ALL
+        print(output)
+
+    @classmethod
+    def print_message(cls, text=""):
+        """
+        This is the standard colouring for a
+        message in this program.
+        """
+        output = Fore.GREEN + text + Style.RESET_ALL
+        print(output)
+
+file = file_control.FileController()
 
 
 def get_soup(url):
-    global site_count
     """ Returns a soup object """
 
-    r = requests.get(url)
-    site_count += 1
-    return BeautifulSoup(r.text, "html.parser")
+    while True:
+        try:
+            req = requests.get(url, timeout=5)
+            break
+        except requests.exceptions.ConnectTimeout:
+            Terminal.print_error("Connection Timed Out")
+            Terminal.print_warning("Retrying...")
+
+    return BeautifulSoup(req.text, "html.parser")
 
 
 def get_book_lists(soup, site=""):
@@ -24,20 +71,20 @@ def get_book_lists(soup, site=""):
     urls = []
 
     for i in sites:
-        urls.append("{}{}".format(site, i["href"]))
+        site_url = i["href"]
+        urls.append(f"{site}{site_url}")
 
     return urls
 
 
-def get_book_list_data(book_site, book_list_site, frame=pd.DataFrame):
+def get_book_list_data(book_site, book_list_site):
     """
     This gets a list of books from the site provided.
     """
 
-    global site_count
     book_list_soup = get_soup(book_list_site)
 
-    for book_list in book_list_soup:
+    for _ in book_list_soup:
         urls = get_book_lists(book_list_soup, book_site[:-1])
         for url in urls:
             list_book_soup = get_soup(url)
@@ -49,14 +96,14 @@ def get_book_list_data(book_site, book_list_site, frame=pd.DataFrame):
                 link = get_link(book, book_site)
 
                 file.add(title, desc, thumb, link)
-                site_update = "Site {}: Registered".format(site_count)
+                site_update = f"Site {link}: Registered"
 
                 # Ensures that the program does not error
                 # if the file did not get setup.
                 try:
-                    colours.print_message(site_update)
+                    Terminal.print_message(site_update)
                 except AttributeError:
-                    print("{} (GoodReads file has not been setup)".format(site_update))
+                    print(f"{site_update} (GoodReads file has not been setup)")
 
 
 def get_books(soup):
@@ -65,7 +112,9 @@ def get_books(soup):
 
 
 def get_title(book):
-    """Returns the title of the book"""
+    """
+    Returns the title of the book
+    """
     return book.find("span", {"itemprop": "name"}).text
 
 
@@ -93,7 +142,7 @@ def get_link(book, site):
     return site[:-1] + book.find("a", {"class": "bookTitle"})["href"]
 
 
-def GoodReads():
+def good_reads():
     """
     This is the main function, by running this
     it starts web-scrapping from the site variable as
@@ -102,8 +151,6 @@ def GoodReads():
     This function works through all the available links
     that link to books.
     """
-
-    global site_count
 
     site = "https://www.goodreads.com/"
 
@@ -115,27 +162,11 @@ def GoodReads():
     regx = re.compile("/genres/+")
 
     book_sites_links = soup.find_all("a", {"class": "gr-hyperlink"}, href=regx)
-    site_count = 0
 
-    for s in book_sites_links:
-        book_list_site = site[:-1] + s["href"]
+    for site_link in book_sites_links:
+        book_list_site = site[:-1] + site_link["href"]
         get_book_list_data(site, book_list_site)
 
 
-def setup(**kwargs):
-    """
-    This sets up the file so it has access
-    to the terminal colours.
-    """
-
-    global colours
-
-    terminal_colors = kwargs["terminal_colors"]
-    colours = terminal_colors
-
-    if colours is not None:
-        FileControl.setup(terminal_colors=colours)
-
-
 if __name__ == "__main__":
-    GoodReads()
+    good_reads()
