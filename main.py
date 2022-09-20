@@ -7,11 +7,44 @@
 """
 
 from time import sleep
+from colorama import Fore, Style
 from good_reads import good_reads
 from good_reads import file
 from good_reads import file_control
-from visual_elements import Terminal as colours
 from visual_elements import MenuBuilder
+
+class Terminal:
+    """
+    This is used to orgainise the functions
+    so it is easier to import into other files.
+    """
+
+    @classmethod
+    def print_error(cls, text=""):
+        """
+        This is the standard colouring for an
+        error message in this program.
+        """
+        output = Fore.RED + text + Style.RESET_ALL
+        print(output)
+
+    @classmethod
+    def print_warning(cls, text=""):
+        """
+        This is the standard colouring for a
+        warning message in this program.
+        """
+        output = Fore.YELLOW + text + Style.RESET_ALL
+        print(output)
+
+    @classmethod
+    def print_message(cls, text=""):
+        """
+        This is the standard colouring for a
+        message in this program.
+        """
+        output = Fore.GREEN + text + Style.RESET_ALL
+        print(output)
 
 
 def sites_menu():
@@ -61,7 +94,7 @@ def view_data_menu():
                 print(frame.to_string())
                 sleep(2)
             elif user_choice == 2:
-                colours.print_message("\n\nPlease specify the amount of books to view")
+                Terminal.print_message("\n\nPlease specify the amount of books to view")
                 books_to_view = view_menu.get_number_input(1)
                 frame = file.view_latest_book_titles_frame(books_to_view)
                 print(frame.to_string())
@@ -102,7 +135,7 @@ def main_menu():
             elif choice == 3:
                 while True:
                     try:
-                        colours.print_message(
+                        Terminal.print_message(
                             "\n\nPlease type in the file name including the file extension."
                         )
                         export_name = main_menu_object.get_input()
@@ -112,15 +145,15 @@ def main_menu():
                         break
                     except file_control.ExportError as error:
                         error_message = f"\n\nFailed to export with reason: {error}"
-                        colours.print_error(error_message)
+                        Terminal.print_error(error_message)
                 sleep(4)
 
             elif choice == 4:
-                colours.print_message("\n\nThank you for using the Book Scraper.")
+                Terminal.print_message("\n\nThank you for using the Book Scraper.")
                 break
 
         except KeyboardInterrupt:
-            colours.print_message("\n\nThank you for using the Book Scraper.\n\n")
+            Terminal.print_message("\n\nThank you for using the Book Scraper.\n\n")
             break
 
 
