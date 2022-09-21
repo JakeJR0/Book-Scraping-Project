@@ -1,5 +1,6 @@
 # Book Scraping Project
 [![Pylint](https://github.com/JakeJR0/Book-Scraping-Project/actions/workflows/pylint.yml/badge.svg?branch=main)](https://github.com/JakeJR0/Book-Scraping-Project/actions/workflows/pylint.yml)
+[![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
 
 ## Introduction
 
