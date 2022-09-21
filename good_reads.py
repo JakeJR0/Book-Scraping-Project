@@ -23,9 +23,12 @@ def get_soup(url):
 
     while True:
         try:
-            req = requests.get(url, timeout=5)
+            req = requests.get(url, timeout=10)
             break
         except requests.exceptions.ConnectTimeout:
+            Terminal.print_error("Connection Timed Out")
+            Terminal.print_warning("Retrying...")
+        except requests.exceptions.ReadTimeout:
             Terminal.print_error("Connection Timed Out")
             Terminal.print_warning("Retrying...")
 
